@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 
 namespace GetWeather
 {
@@ -10,6 +8,7 @@ namespace GetWeather
     {
         static readonly string url = "http://api.openweathermap.org/data/2.5/weather";
         static readonly string appid = "542ffd081e67f4512b705f89d2a611b2";
+
         public static string MakeRequest(string location)
         {
             string requestString = string.Format("{0}?q={1}&appid={2}", url, location, appid);
@@ -21,7 +20,7 @@ namespace GetWeather
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             StreamReader reader = new StreamReader(response.GetResponseStream());
             string output = reader.ReadToEnd();
-            
+
             return output;
         }
         public static void ResultsOutput(WeatherData weatherData)
