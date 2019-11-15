@@ -12,7 +12,8 @@ namespace GetWeather
         {
             if (!File.Exists(filePath))
             {
-                File.Create(filePath);
+                var fileStream = File.Create(filePath);
+                fileStream.Close();
             }
         }
 
