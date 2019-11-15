@@ -8,6 +8,14 @@ namespace GetWeather
     {
         static string filePath = Environment.CurrentDirectory + "\\cach.txt";
 
+        public static void CreateCachFileIfNotExists()
+        {
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath);
+            }
+        }
+
         public static void ReadFromFileToDirectories(Dictionary<string, DateTime> cachTime, Dictionary<string, string> cachOutput)
         {
             string[] readText = File.ReadAllLines(filePath);

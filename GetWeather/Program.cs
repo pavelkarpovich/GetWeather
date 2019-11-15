@@ -11,6 +11,7 @@ namespace GetWeather
 
         static void Main(string[] args)
         {
+            FileHelper.CreateCachFileIfNotExists();
             FileHelper.ReadFromFileToDirectories(cachTime, cachOutput);
 
             Console.WriteLine("Getting weather data from https://openweathermap.org/");
