@@ -6,62 +6,23 @@ namespace GetWeather
 {
     class Program
     {
-        static Dictionary<string, DateTime> cachTime = new Dictionary<string, DateTime>();
-        static Dictionary<string, string> cachOutput = new Dictionary<string, string>();
+        
 
         static void Main(string[] args)
         {
-            FileHelper.CreateCachFileIfNotExists();
-            FileHelper.ReadFromFileToDirectories(cachTime, cachOutput);
+            Cache cache = new Cache();
+            cache.CreateCachFileIfNotExists();
+            cache.ReadFromCacheFileToDictionaries();
 
             Console.WriteLine("Getting weather data from https://openweathermap.org/");
             Console.WriteLine();
 
-            string location, output = "";
-            bool requestSuccess = false;
-            do
-            {
-                Console.Write("Please, enter location name (e.g. London): ");
-                location = Console.ReadLine();
 
-                if (cachTime.ContainsKey(location.ToUpper()))
-                {
-                    DateTime timeFirst = cachTime[location.ToUpper()];
-                    DateTime timeNow = DateTime.Now;
-                    var diff = timeNow.Subtract(timeFirst).TotalMinutes;
-                    if (diff < 60)
-                    {
-                        output = cachOutput[location.ToUpper()];
 
-                        Console.WriteLine();
-                        Console.WriteLine("Data from cach for time {0}", cachTime[location.ToUpper()]);
-
-                        requestSuccess = true;
-                    }
-                }
-
-                if (output == "")
-                {
-                    try
-                    {
-                        output = Helper.MakeRequest(location);
-
-                        cachTime[location.ToUpper()] = DateTime.Now;
-                        cachOutput[location.ToUpper()] = output;
-
-                        FileHelper.WriteFromDictionariesToFile(cachTime, cachOutput);
-                        requestSuccess = true;
-                    }
-                    catch
-                    {
-                        Console.WriteLine("Request error. Please, check location name");
-                        requestSuccess = false;
-                    }
-                }
-            } while (!requestSuccess);
+            string output = InputOutput.DataInput(cache);
 
             WeatherData weatherData = JsonConvert.DeserializeObject<WeatherData>(output);
-            Helper.ResultsOutput(weatherData);
+            InputOutput.ResultsOutput(weatherData);
 
             Console.ReadLine();
         }

@@ -4,11 +4,24 @@ using System.IO;
 
 namespace GetWeather
 {
-    static class FileHelper
+    class Cache
     {
-        static string filePath = Environment.CurrentDirectory + "\\cach.txt";
+        static readonly string filePath = Environment.CurrentDirectory + "\\cach.txt";
 
-        public static void CreateCachFileIfNotExists()
+        //private Dictionary<string, DateTime> cacheTime;
+        //private Dictionary<string, string> cacheOutput;
+
+        public Cache()
+        {
+            CacheTime = new Dictionary<string, DateTime>();
+            CacheOutput = new Dictionary<string, string>();
+        }
+
+        public Dictionary<string, DateTime> CacheTime { get; set; }
+        public Dictionary<string, string> CacheOutput { get; set; }
+
+
+        public void CreateCachFileIfNotExists()
         {
             if (!File.Exists(filePath))
             {
@@ -17,20 +30,21 @@ namespace GetWeather
             }
         }
 
-        public static void ReadFromFileToDirectories(Dictionary<string, DateTime> cachTime, Dictionary<string, string> cachOutput)
+        //public void ReadFromCacheFileToDictionaries(Dictionary<string, DateTime> cachTime, Dictionary<string, string> cachOutput)
+        public void ReadFromCacheFileToDictionaries()
         {
             string[] readText = File.ReadAllLines(filePath);
             for (int i = 0; i < readText.Length; i++)
             {
                 string key = readText[i].Substring(0, readText[i].IndexOf("<"));
                 string timeText = readText[i].Substring(readText[i].IndexOf("<") + 1, readText[i].IndexOf(">") - readText[i].IndexOf("<") - 1);
-                cachTime[key] = DateTime.Parse(timeText);
+                CacheTime[key] = DateTime.Parse(timeText);
                 string outputText = readText[i].Substring(readText[i].IndexOf(">") + 1, readText[i].Length - readText[i].IndexOf(">") - 1);
-                cachOutput[key] = outputText;
+                CacheOutput[key] = outputText;
             }
         }
 
-        public static void WriteFromDictionariesToFile(Dictionary<string, DateTime> cachTime, Dictionary<string, string> cachOutput)
+        public static void WriteFromDictionariesToCacheFile(Dictionary<string, DateTime> cachTime, Dictionary<string, string> cachOutput)
         {
             File.WriteAllText(filePath, string.Empty);
             foreach (var key in cachTime.Keys)
@@ -38,6 +52,5 @@ namespace GetWeather
                 File.AppendAllText(filePath, key + "<" + cachTime[key] + ">" + cachOutput[key] + Environment.NewLine);
             }
         }
-
     }
 }
